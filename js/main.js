@@ -12029,6 +12029,9 @@ var ProductList = function (_React$Component) {
           });
 
           var pageCount = Math.ceil(indexedItems[firstId].length / _this2.state.itemsPerPage);
+          if (pageCount == 0) {
+            pageCount = 1;
+          }
           var fullCurrentArray = indexedItems[firstId];
           var arrayOnPage = [];
           var itemsCount = _this2.state.itemsPerPage;
@@ -12061,7 +12064,7 @@ var ProductList = function (_React$Component) {
             currentCategId: '',
             currentArray: [],
             showPagination: false,
-            pageCount: 0,
+            pageCount: 1,
             isload: true,
             show: true
           });
@@ -12089,6 +12092,9 @@ var ProductList = function (_React$Component) {
       }
 
       var pageCount = Math.ceil(newItems.length / itemsPerPage);
+      if (pageCount == 0) {
+        pageCount = 1;
+      }
 
       var categories = this.state.arrayCategories;
       categories.forEach(function (elem) {
@@ -12101,6 +12107,9 @@ var ProductList = function (_React$Component) {
 
       if (localStorage.getItem('role') == 'admin') {
         for (var i = 0; i < itemsPerPage - 1; i++) {
+          if (Math.ceil(newItems.length / itemsPerPage) == 1) {
+            pageCount = 1;
+          }
           if (newItems[i]) {
             arrayOnPage.push(newItems[i]);
           }
@@ -12561,7 +12570,10 @@ var ProductList = function (_React$Component) {
         }
 
         var items = this.state.itemsPerPage;
-        var pages = Math.ceil(categArray / (items - 1));
+        var pages = Math.ceil(categArray.length / (items - 2));
+        if (pages == 0) {
+          pages = 1;
+        }
 
         _itemsArray[category] = categArray;
         this.setState({ indexedItems: _itemsArray, currentArray: currentArray, currentArrayOnPage: currentArrayOnPage, pageCount: pages });
@@ -12645,7 +12657,10 @@ var ProductList = function (_React$Component) {
         var pages = 0;
         if (localStorage.getItem('role') == 'admin') {
           itemsCount = 8;
-          pages = Math.ceil(currentArray.length / itemsCount);
+          pages = Math.ceil(currentArray.length / (itemsCount - 2));
+          if (pages == 0) {
+            pages = 1;
+          }
         }
         for (var i = 0; i < itemsCount; i++) {
           if (currentArray[i]) {
