@@ -12032,14 +12032,10 @@ var ProductList = function (_React$Component) {
           var fullCurrentArray = indexedItems[firstId];
           var arrayOnPage = [];
           for (var i = 0; i < _this2.state.itemsPerPage; i++) {
-            console.log(fullCurrentArray[i]);
             if (fullCurrentArray[i]) {
               arrayOnPage.push(fullCurrentArray[i]);
             }
           }
-
-          console.log('..', arrayOnPage);
-
           _this2.setState({
             arrayCategories: object.arrayCateg,
             indexedItems: indexedItems,
@@ -12336,7 +12332,6 @@ var ProductList = function (_React$Component) {
 
       if (arr) {
         if (arr.length > 0) {
-          console.log('.........', arr);
           if (localStorage.getItem('role') == 'admin') {
             return arr.map(function (item) {
               return _react2.default.createElement(
@@ -12479,11 +12474,22 @@ var ProductList = function (_React$Component) {
               } else {
                 curArr = [];
               }
+              var arrayOnPage = [];
+              var itemsCount = this.state.itemsPerPage;
+              if (localStorage.getItem('role') == 'admin') {
+                itemsCount = 8;
+              }
+              for (var _i2 = 0; _i2 < itemsCount; _i2++) {
+                if (curArr[_i2]) {
+                  arrayOnPage.push(curArr[_i2]);
+                }
+              }
               this.setState({
                 currentCategId: cid,
                 arrayCategories: categories,
                 indexedItems: itemsArray,
                 currentArray: curArr,
+                currentArrayOnPage: arrayOnPage,
                 editCategInp: _name
               });
             } else if (i > 0 && !(categories.length == 0)) {
@@ -12495,11 +12501,22 @@ var ProductList = function (_React$Component) {
               } else {
                 _curArr = [];
               }
+              var _arrayOnPage = [];
+              var _itemsCount = this.state.itemsPerPage;
+              if (localStorage.getItem('role') == 'admin') {
+                _itemsCount = 8;
+              }
+              for (var _i3 = 0; _i3 < _itemsCount; _i3++) {
+                if (_curArr[_i3]) {
+                  _arrayOnPage.push(_curArr[_i3]);
+                }
+              }
               this.setState({
                 currentCategId: _cid,
                 arrayCategories: categories,
                 indexedItems: itemsArray,
                 currentArray: _curArr,
+                currentArrayOnPage: _arrayOnPage,
                 editCategInp: _name2
               });
             } else {
@@ -12508,6 +12525,7 @@ var ProductList = function (_React$Component) {
                 arrayCategories: [],
                 indexedItems: {},
                 currentArray: [],
+                currentArrayOnPage: [],
                 editCategInp: ''
               });
             }
@@ -12521,19 +12539,19 @@ var ProductList = function (_React$Component) {
         var currentArrayOnPage = this.state.currentArrayOnPage;
 
         var categArray = _itemsArray[category];
-        for (var _i2 = 0; _i2 < currentArray.length; _i2++) {
-          if (currentArray[_i2]._id == item) {
-            currentArray.splice(_i2, 1);
+        for (var _i4 = 0; _i4 < currentArray.length; _i4++) {
+          if (currentArray[_i4]._id == item) {
+            currentArray.splice(_i4, 1);
           }
         }
-        for (var _i3 = 0; _i3 < currentArrayOnPage.length; _i3++) {
-          if (currentArrayOnPage[_i3]._id == item) {
-            currentArrayOnPage.splice(_i3, 1);
+        for (var _i5 = 0; _i5 < currentArrayOnPage.length; _i5++) {
+          if (currentArrayOnPage[_i5]._id == item) {
+            currentArrayOnPage.splice(_i5, 1);
           }
         }
-        for (var _i4 = 0; _i4 < categArray.length; _i4++) {
-          if (categArray[_i4]._id == item) {
-            categArray.splice(_i4, 1);
+        for (var _i6 = 0; _i6 < categArray.length; _i6++) {
+          if (categArray[_i6]._id == item) {
+            categArray.splice(_i6, 1);
           }
         }
         _itemsArray[category] = categArray;
@@ -12567,16 +12585,16 @@ var ProductList = function (_React$Component) {
             currentArray[i].price = price;
           }
         }
-        for (var _i5 = 0; _i5 < currentArrayOnPage.length; _i5++) {
-          if (currentArrayOnPage[_i5]._id == itemId) {
-            currentArrayOnPage[_i5].itemName = data;
-            currentArrayOnPage[_i5].price = price;
+        for (var _i7 = 0; _i7 < currentArrayOnPage.length; _i7++) {
+          if (currentArrayOnPage[_i7]._id == itemId) {
+            currentArrayOnPage[_i7].itemName = data;
+            currentArrayOnPage[_i7].price = price;
           }
         }
-        for (var _i6 = 0; _i6 < categArray.length; _i6++) {
-          if (categArray[_i6]._id == itemId) {
-            categArray[_i6].itemName = data;
-            categArray[_i6].price = price;
+        for (var _i8 = 0; _i8 < categArray.length; _i8++) {
+          if (categArray[_i8]._id == itemId) {
+            categArray[_i8].itemName = data;
+            categArray[_i8].price = price;
           }
         }
         itemsArray[id] = categArray;
@@ -12629,7 +12647,6 @@ var ProductList = function (_React$Component) {
     key: "handlePageClick",
     value: function handlePageClick(data) {
       var selected = data.selected;
-      console.log(selected);
       var itemsPerPage = this.state.itemsPerPage;
       var array = this.state.currentArray;
 
@@ -12642,9 +12659,9 @@ var ProductList = function (_React$Component) {
           }
         }
       } else {
-        for (var _i7 = selected * itemsPerPage; _i7 < (selected + 1) * itemsPerPage; _i7++) {
-          if (array[_i7]) {
-            pageArray.push(array[_i7]);
+        for (var _i9 = selected * itemsPerPage; _i9 < (selected + 1) * itemsPerPage; _i9++) {
+          if (array[_i9]) {
+            pageArray.push(array[_i9]);
           }
         }
       }
