@@ -12031,11 +12031,16 @@ var ProductList = function (_React$Component) {
           var pageCount = Math.ceil(indexedItems[firstId].length / _this2.state.itemsPerPage);
           var fullCurrentArray = indexedItems[firstId];
           var arrayOnPage = [];
-          for (var i = 0; i < _this2.state.itemsPerPage; i++) {
+          var itemsCount = _this2.state.itemsPerPage;
+          if (localStorage.getItem('role') == 'admin') {
+            itemsCount = 8;
+          }
+          for (var i = 0; i < itemsCount; i++) {
             if (fullCurrentArray[i]) {
               arrayOnPage.push(fullCurrentArray[i]);
             }
           }
+
           _this2.setState({
             arrayCategories: object.arrayCateg,
             indexedItems: indexedItems,
@@ -12554,8 +12559,12 @@ var ProductList = function (_React$Component) {
             categArray.splice(_i6, 1);
           }
         }
+
+        var items = this.state.itemsPerPage;
+        var pages = Math.ceil(categArray / (items - 1));
+
         _itemsArray[category] = categArray;
-        this.setState({ indexedItems: _itemsArray, currentArray: currentArray, currentArrayOnPage: currentArrayOnPage });
+        this.setState({ indexedItems: _itemsArray, currentArray: currentArray, currentArrayOnPage: currentArrayOnPage, pageCount: pages });
       }
     }
   }, {
@@ -12630,10 +12639,25 @@ var ProductList = function (_React$Component) {
           indexedItems[elem.parentId] = indexedItems[elem.parentId] || [];
           indexedItems[elem.parentId].push(elem);
         });
+        var currentArray = indexedItems[_this9.state.currentCategId];
+        var arrayOnPage = [];
+        var itemsCount = _this9.state.itemsPerPage;
+        var pages = 0;
+        if (localStorage.getItem('role') == 'admin') {
+          itemsCount = 8;
+          pages = Math.ceil(currentArray.length / itemsCount);
+        }
+        for (var i = 0; i < itemsCount; i++) {
+          if (currentArray[i]) {
+            arrayOnPage.push(currentArray[i]);
+          }
+        }
 
         _this9.setState({
           indexedItems: indexedItems,
           currentArray: indexedItems[_this9.state.currentCategId],
+          currentArrayOnPage: arrayOnPage,
+          pageCount: pages,
           show: true,
           show2: true
         });
