@@ -11997,8 +11997,7 @@ var ProductList = function (_React$Component) {
       isload: false,
       mobileShow: false,
       menuIcon: 'fa-arrow-down',
-
-      pageCount: '',
+      pageCount: 1,
       itemsPerPage: 9,
       pageItemsArray: []
     };
@@ -12519,19 +12518,26 @@ var ProductList = function (_React$Component) {
         var category = this.state.currentCategId;
         var _itemsArray = this.state.indexedItems;
         var currentArray = this.state.currentArray;
+        var currentArrayOnPage = this.state.currentArrayOnPage;
+
         var categArray = _itemsArray[category];
         for (var _i2 = 0; _i2 < currentArray.length; _i2++) {
           if (currentArray[_i2]._id == item) {
             currentArray.splice(_i2, 1);
           }
         }
-        for (var _i3 = 0; _i3 < categArray.length; _i3++) {
-          if (categArray[_i3]._id == item) {
-            categArray.splice(_i3, 1);
+        for (var _i3 = 0; _i3 < currentArrayOnPage.length; _i3++) {
+          if (currentArrayOnPage[_i3]._id == item) {
+            currentArrayOnPage.splice(_i3, 1);
+          }
+        }
+        for (var _i4 = 0; _i4 < categArray.length; _i4++) {
+          if (categArray[_i4]._id == item) {
+            categArray.splice(_i4, 1);
           }
         }
         _itemsArray[category] = categArray;
-        this.setState({ indexedItems: _itemsArray, currentArray: currentArray });
+        this.setState({ indexedItems: _itemsArray, currentArray: currentArray, currentArrayOnPage: currentArrayOnPage });
       }
     }
   }, {
@@ -12553,6 +12559,7 @@ var ProductList = function (_React$Component) {
       } else if (title == 'item') {
         var itemsArray = this.state.indexedItems;
         var currentArray = this.state.currentArray;
+        var currentArrayOnPage = this.state.currentArrayOnPage;
         var categArray = itemsArray[id];
         for (var i = 0; i < currentArray.length; i++) {
           if (currentArray[i]._id == itemId) {
@@ -12560,14 +12567,20 @@ var ProductList = function (_React$Component) {
             currentArray[i].price = price;
           }
         }
-        for (var _i4 = 0; _i4 < categArray.length; _i4++) {
-          if (categArray[_i4]._id == itemId) {
-            categArray[_i4].itemName = data;
-            categArray[_i4].price = price;
+        for (var _i5 = 0; _i5 < currentArrayOnPage.length; _i5++) {
+          if (currentArrayOnPage[_i5]._id == itemId) {
+            currentArrayOnPage[_i5].itemName = data;
+            currentArrayOnPage[_i5].price = price;
+          }
+        }
+        for (var _i6 = 0; _i6 < categArray.length; _i6++) {
+          if (categArray[_i6]._id == itemId) {
+            categArray[_i6].itemName = data;
+            categArray[_i6].price = price;
           }
         }
         itemsArray[id] = categArray;
-        this.setState({ indexedItems: itemsArray, currentArray: currentArray, showEditItem: false });
+        this.setState({ indexedItems: itemsArray, currentArray: currentArray, currentArrayOnPage: currentArrayOnPage, showEditItem: false });
       }
     }
   }, {
@@ -12629,9 +12642,9 @@ var ProductList = function (_React$Component) {
           }
         }
       } else {
-        for (var _i5 = selected * itemsPerPage; _i5 < (selected + 1) * itemsPerPage; _i5++) {
-          if (array[_i5]) {
-            pageArray.push(array[_i5]);
+        for (var _i7 = selected * itemsPerPage; _i7 < (selected + 1) * itemsPerPage; _i7++) {
+          if (array[_i7]) {
+            pageArray.push(array[_i7]);
           }
         }
       }
