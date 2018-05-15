@@ -338,22 +338,41 @@ input[type='radio']:checked:after {
 }
 
 .wrapper {
-    height: calc(100% - 70px);
     display: grid;
+    width: 100%;
+    height: calc(100% - 70px);
+    grid-template-areas: 	"nav  head"
+                            "nav  main"
+                            "nav  foot";
+    grid-template-rows: 50px 1fr 50px;
     grid-template-columns: minmax(260px, 20%) minmax(300px, 80%);
 }
 
 .categoriesMenu {
+    grid-area: nav;
     margin: 0 20px 0 0;
     background-color: #233750;
 }
 
 .itemsList {
-    padding: 20px 20px 20px 0;
+    grid-area: main;
     display: grid;
     grid-gap: 10px;
     grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    grid-template-rows: repeat(auto-fill, 360px);
+    grid-template-rows: repeat(auto-fill, 310px);
+    padding: 20px 20px 20px 0;
+}
+
+
+
+.pagination {
+    grid-area: foot;
+    justify-content: center;
+}
+
+.paginationTop {
+    grid-area: head;
+    margin: 20px auto;
 }
 
 .menuLabel {
@@ -432,11 +451,11 @@ input[type='radio']:checked:after {
 .categoriesItem {
     float: left;
     position: relative;
-    margin-bottom: 20px;
     min-width: 190px;
-    min-height: 340px;
-    max-width: 400px;
-    padding: 12px 14px;
+    min-height: 300px;
+    max-width: 450px;
+    margin-bottom: 10px;
+    padding: 10px 10px;
     background-color: #fff;
     border: 1px solid #999;
     box-shadow: 0 0 10px rgba(0,0,0,0.5);
@@ -593,10 +612,9 @@ input[type='radio']:checked:after {
 .AddNewItem {
     float: left;
     cursor: pointer;
-    margin-bottom: 20px;
     min-width: 190px;
-    min-height: 340px;
-    max-width: 400px;
+    min-height: 300px;
+    max-width: 450px;
     padding: 130px 0 0 0;
     background-color: #fff;
     border: 1px solid #999;
@@ -675,13 +693,13 @@ input[type='radio']:checked:after {
 }
 
 .pagination > li  {
-    padding: 5px 10px;
     height: 35px;
-    line-height: 25px;
     background-color: #fff;
 }
 
 .pagination li > a {
+    padding: 5px 10px;
+    line-height: 35px;
     cursor: pointer;
 }
 
@@ -1281,7 +1299,7 @@ footer a:hover, footer a:focus {
 
     .categoriesItem {
         float: none;
-        max-width: none;
+        max-width: 500px;
     }
 
     .AddNewItem {
@@ -1395,9 +1413,15 @@ footer a:hover, footer a:focus {
     /* */
 }
 
-@media all and (min-width:1090px) {
+@media all and (min-width:1351px) {
     .itemsList {
-        grid-template-columns: repeat(auto-fit, 340px);
+        grid-template-columns: repeat(auto-fit, minmax(280px, 340px));
+    }
+}
+
+@media all and (min-width:1210px) and (max-width:1350px) {
+    .itemsList {
+        grid-template-columns: repeat(auto-fit, minmax(280px, 300px));
     }
 }
 
