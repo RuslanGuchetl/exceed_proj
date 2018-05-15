@@ -11987,18 +11987,19 @@ var ProductList = function (_React$Component) {
       currentCategId: '',
       indexedItems: {},
       editingItem: {},
+      isAdmin: false,
       show: false,
       show2: false,
       show3: false,
       showEditCateg: false,
       showAddItem: false,
       showEditItem: false,
-      showPagination: false,
       isload: false,
       mobileShow: false,
       menuIcon: 'fa-arrow-down',
       pageCount: 1,
-      itemsPerPage: 9,
+      itemsPerPage: 12,
+      selected: 0,
       pageItemsArray: []
     };
     return _this;
@@ -12019,30 +12020,35 @@ var ProductList = function (_React$Component) {
       var data = localStorage.getItem('token');
       var http = new _http2.default();
 
+      if (localStorage.getItem('role') == 'admin') {
+        this.setState({ isAdmin: true, itemsPerPage: 11 });
+      }
+
       http.get(url, data).then(function (object) {
         if (object.arrayCateg[0]) {
           var firstId = object.arrayCateg[0]._id;
           var indexedItems = {};
+
+          var arrayOnPage = [];
+          var itemsCount = _this2.state.itemsPerPage;
+
+          if (localStorage.getItem('role') == 'admin') {
+            itemsCount = 11;
+          }
+
           object.arrayItem.forEach(function (elem) {
             indexedItems[elem.parentId] = indexedItems[elem.parentId] || [];
             indexedItems[elem.parentId].push(elem);
           });
 
+          var fullCurrentArray = indexedItems[firstId];
+
           var pageCount = Math.ceil(indexedItems[firstId].length / _this2.state.itemsPerPage);
           if (pageCount == 0) {
             pageCount = 1;
           }
-          var fullCurrentArray = indexedItems[firstId];
-          var arrayOnPage = [];
-          var itemsCount = _this2.state.itemsPerPage;
-          if (localStorage.getItem('role') == 'admin') {
-            itemsCount = 8;
-          }
-          for (var i = 0; i < itemsCount; i++) {
-            if (fullCurrentArray[i]) {
-              arrayOnPage.push(fullCurrentArray[i]);
-            }
-          }
+
+          arrayOnPage = fullCurrentArray.slice(0, itemsCount);
 
           _this2.setState({
             arrayCategories: object.arrayCateg,
@@ -12051,7 +12057,6 @@ var ProductList = function (_React$Component) {
             editCategInp: object.arrayCateg[0].categoryName,
             currentArray: indexedItems[firstId],
             currentArrayOnPage: arrayOnPage,
-            showPagination: true,
             pageCount: pageCount,
             isload: true,
             show: true
@@ -12063,7 +12068,6 @@ var ProductList = function (_React$Component) {
             indexedItems: {},
             currentCategId: '',
             currentArray: [],
-            showPagination: false,
             pageCount: 1,
             isload: true,
             show: true
@@ -12084,6 +12088,7 @@ var ProductList = function (_React$Component) {
       var currentCateg = e.currentTarget.dataset.id;
       var itemsArray = this.state.indexedItems;
       var itemsPerPage = this.state.itemsPerPage;
+      var categories = this.state.arrayCategories;
       var newItems = [];
       var value = '';
 
@@ -12096,31 +12101,13 @@ var ProductList = function (_React$Component) {
         pageCount = 1;
       }
 
-      var categories = this.state.arrayCategories;
       categories.forEach(function (elem) {
         if (elem._id == currentCateg) {
           value = elem.categoryName;
         }
       });
 
-      var arrayOnPage = [];
-
-      if (localStorage.getItem('role') == 'admin') {
-        for (var i = 0; i < itemsPerPage - 1; i++) {
-          if (Math.ceil(newItems.length / itemsPerPage) == 1) {
-            pageCount = 1;
-          }
-          if (newItems[i]) {
-            arrayOnPage.push(newItems[i]);
-          }
-        }
-      } else {
-        for (var _i = 0; _i < itemsPerPage; _i++) {
-          if (newItems[_i]) {
-            arrayOnPage.push(newItems[_i]);
-          }
-        }
-      }
+      var arrayOnPage = newItems.slice(0, itemsPerPage);
 
       this.setState({
         currentArray: newItems,
@@ -12140,7 +12127,7 @@ var ProductList = function (_React$Component) {
       if (arr) {
         if (arr.length > 0) {
           var cid = this.state.currentCategId;
-          if (localStorage.getItem('role') == 'admin') {
+          if (this.state.isAdmin) {
             return arr.map(function (item) {
               return _react2.default.createElement(
                 "li",
@@ -12210,7 +12197,7 @@ var ProductList = function (_React$Component) {
           isload: true,
           show: true
         });
-        if (localStorage.getItem('role') == 'admin') {
+        if (_this4.state.isAdmin) {
           _this4.setState({ show2: true });
         }
         body.className = body.className.replace(" modalBlock", "");
@@ -12346,7 +12333,7 @@ var ProductList = function (_React$Component) {
 
       if (arr) {
         if (arr.length > 0) {
-          if (localStorage.getItem('role') == 'admin') {
+          if (this.state.isAdmin) {
             return arr.map(function (item) {
               return _react2.default.createElement(
                 "div",
@@ -12488,23 +12475,22 @@ var ProductList = function (_React$Component) {
               } else {
                 curArr = [];
               }
-              var arrayOnPage = [];
-              var itemsCount = this.state.itemsPerPage;
-              if (localStorage.getItem('role') == 'admin') {
-                itemsCount = 8;
+
+              var itemsPerPage = this.state.itemsPerPage;
+              var pages = Math.ceil(curArr.length / itemsPerPage);
+              if (pages == 0) {
+                pages = 1;
               }
-              for (var _i2 = 0; _i2 < itemsCount; _i2++) {
-                if (curArr[_i2]) {
-                  arrayOnPage.push(curArr[_i2]);
-                }
-              }
+              var arrayOnPage = curArr.slice(0, itemsPerPage);
+
               this.setState({
                 currentCategId: cid,
                 arrayCategories: categories,
                 indexedItems: itemsArray,
                 currentArray: curArr,
                 currentArrayOnPage: arrayOnPage,
-                editCategInp: _name
+                editCategInp: _name,
+                pageCount: pages
               });
             } else if (i > 0 && !(categories.length == 0)) {
               var _cid = categories[i - 1]._id;
@@ -12515,23 +12501,21 @@ var ProductList = function (_React$Component) {
               } else {
                 _curArr = [];
               }
-              var _arrayOnPage = [];
-              var _itemsCount = this.state.itemsPerPage;
-              if (localStorage.getItem('role') == 'admin') {
-                _itemsCount = 8;
+              var _itemsPerPage = this.state.itemsPerPage;
+              var _pages = Math.ceil(_curArr.length / _itemsPerPage);
+              if (_pages == 0) {
+                _pages = 1;
               }
-              for (var _i3 = 0; _i3 < _itemsCount; _i3++) {
-                if (_curArr[_i3]) {
-                  _arrayOnPage.push(_curArr[_i3]);
-                }
-              }
+              var _arrayOnPage = _curArr.slice(0, _itemsPerPage);
               this.setState({
                 currentCategId: _cid,
                 arrayCategories: categories,
                 indexedItems: itemsArray,
                 currentArray: _curArr,
                 currentArrayOnPage: _arrayOnPage,
-                editCategInp: _name2
+                editCategInp: _name2,
+                pageCount: _pages
+
               });
             } else {
               this.setState({
@@ -12553,30 +12537,35 @@ var ProductList = function (_React$Component) {
         var currentArrayOnPage = this.state.currentArrayOnPage;
 
         var categArray = _itemsArray[category];
-        for (var _i4 = 0; _i4 < currentArray.length; _i4++) {
-          if (currentArray[_i4]._id == item) {
-            currentArray.splice(_i4, 1);
+        for (var _i = 0; _i < currentArray.length; _i++) {
+          if (currentArray[_i]._id == item) {
+            currentArray.splice(_i, 1);
           }
         }
-        for (var _i5 = 0; _i5 < currentArrayOnPage.length; _i5++) {
-          if (currentArrayOnPage[_i5]._id == item) {
-            currentArrayOnPage.splice(_i5, 1);
+        for (var _i2 = 0; _i2 < currentArrayOnPage.length; _i2++) {
+          if (currentArrayOnPage[_i2]._id == item) {
+            currentArrayOnPage.splice(_i2, 1);
           }
         }
-        for (var _i6 = 0; _i6 < categArray.length; _i6++) {
-          if (categArray[_i6]._id == item) {
-            categArray.splice(_i6, 1);
+        for (var _i3 = 0; _i3 < categArray.length; _i3++) {
+          if (categArray[_i3]._id == item) {
+            categArray.splice(_i3, 1);
           }
         }
 
-        var items = this.state.itemsPerPage;
-        var pages = Math.ceil(categArray.length / (items - 2));
-        if (pages == 0) {
-          pages = 1;
+        var _itemsPerPage2 = this.state.itemsPerPage;
+        var _pages2 = Math.ceil(categArray.length / _itemsPerPage2);
+        if (_pages2 == 0) {
+          _pages2 = 1;
         }
 
         _itemsArray[category] = categArray;
-        this.setState({ indexedItems: _itemsArray, currentArray: currentArray, currentArrayOnPage: currentArrayOnPage, pageCount: pages });
+        this.setState({
+          indexedItems: _itemsArray,
+          currentArray: currentArray,
+          currentArrayOnPage: currentArrayOnPage,
+          pageCount: _pages2
+        });
       }
     }
   }, {
@@ -12606,20 +12595,25 @@ var ProductList = function (_React$Component) {
             currentArray[i].price = price;
           }
         }
-        for (var _i7 = 0; _i7 < currentArrayOnPage.length; _i7++) {
-          if (currentArrayOnPage[_i7]._id == itemId) {
-            currentArrayOnPage[_i7].itemName = data;
-            currentArrayOnPage[_i7].price = price;
+        for (var _i4 = 0; _i4 < currentArrayOnPage.length; _i4++) {
+          if (currentArrayOnPage[_i4]._id == itemId) {
+            currentArrayOnPage[_i4].itemName = data;
+            currentArrayOnPage[_i4].price = price;
           }
         }
-        for (var _i8 = 0; _i8 < categArray.length; _i8++) {
-          if (categArray[_i8]._id == itemId) {
-            categArray[_i8].itemName = data;
-            categArray[_i8].price = price;
+        for (var _i5 = 0; _i5 < categArray.length; _i5++) {
+          if (categArray[_i5]._id == itemId) {
+            categArray[_i5].itemName = data;
+            categArray[_i5].price = price;
           }
         }
         itemsArray[id] = categArray;
-        this.setState({ indexedItems: itemsArray, currentArray: currentArray, currentArrayOnPage: currentArrayOnPage, showEditItem: false });
+        this.setState({
+          indexedItems: itemsArray,
+          currentArray: currentArray,
+          currentArrayOnPage: currentArrayOnPage,
+          showEditItem: false
+        });
       }
     }
   }, {
@@ -12652,21 +12646,10 @@ var ProductList = function (_React$Component) {
           indexedItems[elem.parentId].push(elem);
         });
         var currentArray = indexedItems[_this9.state.currentCategId];
-        var arrayOnPage = [];
-        var itemsCount = _this9.state.itemsPerPage;
-        var pages = 0;
-        if (localStorage.getItem('role') == 'admin') {
-          itemsCount = 8;
-          pages = Math.ceil(currentArray.length / (itemsCount - 2));
-          if (pages == 0) {
-            pages = 1;
-          }
-        }
-        for (var i = 0; i < itemsCount; i++) {
-          if (currentArray[i]) {
-            arrayOnPage.push(currentArray[i]);
-          }
-        }
+
+        var itemsPerPage = _this9.state.itemsPerPage;
+        var pages = Math.ceil(currentArray.length / itemsPerPage);
+        var arrayOnPage = currentArray.slice(0, itemsPerPage);
 
         _this9.setState({
           indexedItems: indexedItems,
@@ -12688,24 +12671,9 @@ var ProductList = function (_React$Component) {
       var selected = data.selected;
       var itemsPerPage = this.state.itemsPerPage;
       var array = this.state.currentArray;
-
-      var pageArray = [];
-
-      if (localStorage.getItem('role') == 'admin') {
-        for (var i = selected * (itemsPerPage - 1); i < (selected + 1) * (itemsPerPage - 1); i++) {
-          if (array[i]) {
-            pageArray.push(array[i]);
-          }
-        }
-      } else {
-        for (var _i9 = selected * itemsPerPage; _i9 < (selected + 1) * itemsPerPage; _i9++) {
-          if (array[_i9]) {
-            pageArray.push(array[_i9]);
-          }
-        }
-      }
-
-      this.setState({ currentArrayOnPage: pageArray });
+      var pageArray = array.slice(selected * itemsPerPage, (selected + 1) * itemsPerPage);
+      this.setState({ currentArrayOnPage: pageArray, selected: selected });
+      window.scrollTo(0, 0);
     }
   }, {
     key: "closeModal",
@@ -12755,7 +12723,6 @@ var ProductList = function (_React$Component) {
       var showAddItem = this.state.showAddItem;
       var showEditItem = this.state.showEditItem;
       var mobileShow = this.state.mobileShow;
-      var showPagination = this.state.showPagination;
 
 
       return _react2.default.createElement(
@@ -12841,27 +12808,42 @@ var ProductList = function (_React$Component) {
             }
           )
         ),
+        _react2.default.createElement(_reactPaginate2.default, { previousLabel: "prev",
+          nextLabel: "next",
+          breakLabel: "..",
+          breakClassName: "break-me",
+          pageCount: this.state.pageCount,
+          marginPagesDisplayed: 1,
+          pageRangeDisplayed: 2,
+          onPageChange: this.handlePageClick.bind(this),
+          containerClassName: "pagination paginationTop",
+          subContainerClassName: "pages paginationTop",
+          activeClassName: "active",
+          forcePage: this.state.selected
+        }),
         show && _react2.default.createElement(
           "div",
           { className: "itemsList" },
           this.itemList(this.state.currentArrayOnPage),
-          show && localStorage.getItem('role') == 'admin' && _react2.default.createElement(
+          show && this.state.isAdmin && _react2.default.createElement(
             "div",
             { className: "AddNewItem", onClick: this.addNewItem.bind(this) },
             _react2.default.createElement("i", { className: "fas fa-plus" })
           )
         ),
-        showPagination && _react2.default.createElement(_reactPaginate2.default, { previousLabel: "previous",
+        _react2.default.createElement(_reactPaginate2.default, { previousLabel: "prev",
           nextLabel: "next",
-          breakLabel: "...",
+          breakLabel: "..",
           breakClassName: "break-me",
           pageCount: this.state.pageCount,
-          marginPagesDisplayed: 2,
+          marginPagesDisplayed: 1,
           pageRangeDisplayed: 2,
           onPageChange: this.handlePageClick.bind(this),
           containerClassName: "pagination",
           subContainerClassName: "pages pagination",
-          activeClassName: "active" }),
+          activeClassName: "active",
+          forcePage: this.state.selected
+        }),
         showEditCateg && _react2.default.createElement(_modalWindow2.default, { inputId: "inputEditCateg", title: "category", id: this.state.currentCategId, url: "/categories",
           value: this.state.editCategInp, onUpd: this.updateItem.bind(this),
           closeModal: this.closeModal.bind(this) }),
