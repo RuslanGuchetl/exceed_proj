@@ -475,10 +475,24 @@ input[type='radio']:checked:after {
 }
 
 .itemPrice {
-    font-size: 30px;
+    font-size: 25px;
     font-weight: 700;
     color: #000;
 }
+
+.uploadForm {
+    margin-bottom: 20px;
+}
+
+.uploadForm > input,
+.uploadForm > button {
+    outline: 1px solid #fff;
+}
+
+.uploadForm > input {
+    width: 65%;
+}
+
 
 .plusIcon {
     margin-top: 3px;
@@ -588,6 +602,14 @@ input[type='radio']:checked:after {
     cursor: none;
 }
 
+.itemImage > img {
+    min-width: 190px;
+    min-height: 190px;
+    max-height: 200px;
+    background-image: url(/../img/190x190.png);
+    height: auto;
+}
+
 .MenuItemsAdd:hover:not(.CategInputCheck),
 .MenuItemsAdd:hover:not(.CategInputCancel) {
     color: #ffffff;
@@ -645,7 +667,7 @@ input[type='radio']:checked:after {
     position: absolute;
     cursor: pointer;
     font-size: 20px;
-    color: #000000;
+    color: #28a745;
     top: 12px;
     right: 6px;
 }
@@ -654,7 +676,7 @@ input[type='radio']:checked:after {
     position: absolute;
     cursor: pointer;
     font-size: 20px;
-    color: #000000;
+    color: #dc3545;
     top: 40px;
     right: 10px;
 }
@@ -766,7 +788,7 @@ h3 {
 }
 
 img {
-    max-width: 100%
+    max-width: 100%;
 }
 
 ::-moz-selection {
@@ -1346,6 +1368,10 @@ footer a:hover, footer a:focus {
         padding: 0;
     }
 
+    .fileInput {
+        width: 75%;
+    }
+
     .form-bottom {
         padding: 15px;
     }
@@ -1361,6 +1387,8 @@ footer a:hover, footer a:focus {
         grid-area: head;
         margin: 20px auto 0;
     }
+
+
 
 
     /*Table responsive*/
