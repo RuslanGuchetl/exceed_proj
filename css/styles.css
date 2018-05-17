@@ -463,8 +463,10 @@ input[type='radio']:checked:after {
 
 .itemImage {
     min-width: 190px;
-    min-height: 190px;
+    min-height: 200px;
     margin-bottom: 12px;
+    background-image: url(/../img/no-image.png);
+    background-size: 100%;
 }
 
 .itemTitle {
@@ -603,10 +605,10 @@ input[type='radio']:checked:after {
 }
 
 .itemImage > img {
+    width: 100%;
     min-width: 190px;
-    min-height: 190px;
+    min-height: 200px;
     max-height: 200px;
-    background-image: url(/../img/190x190.png);
     height: auto;
 }
 
